@@ -1,0 +1,116 @@
+[gd_scene load_steps=13 format=3 uid="uid://2p8avr6ao5u8"]
+
+[ext_resource type="Script" uid="uid://d1fx04fanws72" path="res://image_canvas.gd" id="1_kirew"]
+[ext_resource type="Texture2D" uid="uid://bduhruotu08th" path="res://gfx/tex/tex_blank.dds" id="2_p6u7f"]
+[ext_resource type="Script" uid="uid://dhw4qh2co7xxf" path="res://image_canvas_item.gd" id="2_w2yuh"]
+[ext_resource type="Material" uid="uid://5ucpp6txfpn2" path="res://materials/image_canvas_paper.tres" id="4_8t8b1"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o3jxj"]
+resource_local_to_scene = true
+specular_mode = 2
+disable_ambient_light = true
+albedo_color = Color(0, 0, 0, 1)
+emission_enabled = true
+emission_texture = ExtResource("2_p6u7f")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_0f027"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_o3jxj")
+size = Vector2(0.82, 0.82)
+orientation = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p6u7f"]
+albedo_color = Color(0.00566115, 0.00566115, 0.00566115, 1)
+metallic_specular = 0.1
+roughness = 0.5
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_8t8b1"]
+material = SubResource("StandardMaterial3D_p6u7f")
+size = Vector2(0.82, 0.82)
+orientation = 2
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_w2yuh"]
+material = ExtResource("4_8t8b1")
+size = Vector2(0.9, 1)
+orientation = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8t8b1"]
+albedo_color = Color(0, 0, 0, 1)
+emission_enabled = true
+emission = Color(0.96, 0.1728, 0.29088, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_lxfyx"]
+material = SubResource("StandardMaterial3D_8t8b1")
+size = Vector2(0.05, 0.05)
+orientation = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8t8b1"]
+size = Vector3(0.90625, 1, 0.00585938)
+
+[node name="ImageCanvas" type="Node3D"]
+script = ExtResource("1_kirew")
+
+[node name="ImageCanvasItem" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.052, 0)
+mesh = SubResource("PlaneMesh_0f027")
+skeleton = NodePath("../..")
+script = ExtResource("2_w2yuh")
+
+[node name="LabelDir" type="Label3D" parent="ImageCanvasItem"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.483857, 0.01)
+pixel_size = 0.001
+modulate = Color(0.5, 0.5, 0.5, 1)
+outline_modulate = Color(0, 0, 0, 0.176471)
+text = "testtesttest"
+font_size = 20
+outline_size = 6
+
+[node name="LabelName" type="Label3D" parent="ImageCanvasItem"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.43949, 0.01)
+pixel_size = 0.001
+modulate = Color(0.5, 0.5, 0.5, 1)
+outline_modulate = Color(0, 0, 0, 0.176471)
+text = "testtesttest"
+font_size = 30
+outline_size = 6
+
+[node name="LabelInfo" type="Label3D" parent="ImageCanvasItem"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0843125, 0.01)
+pixel_size = 0.001
+text = "sasdasdasd"
+font_size = 40
+
+[node name="LabelIdxOffset" type="Label3D" parent="ImageCanvasItem"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.01)
+visible = false
+pixel_size = 0.001
+text = "X"
+font_size = 640
+outline_size = 64
+
+[node name="LabelIdx" type="Label3D" parent="ImageCanvasItem"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.403479, -0.504501, 0.01)
+pixel_size = 0.001
+modulate = Color(0.501961, 0.501961, 0.501961, 1)
+text = "42"
+
+[node name="ImageCanvasBackdrop" type="MeshInstance3D" parent="ImageCanvasItem"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.001)
+mesh = SubResource("PlaneMesh_8t8b1")
+skeleton = NodePath("../..")
+
+[node name="ImageCanvasPaper" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.002)
+mesh = SubResource("PlaneMesh_w2yuh")
+
+[node name="DirtyIndicator" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.239348, 0.373691, 0.01)
+visible = false
+mesh = SubResource("PlaneMesh_lxfyx")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_8t8b1")
+
+[connection signal="input_event" from="Area3D" to="." method="_on_area_3d_input_event"]

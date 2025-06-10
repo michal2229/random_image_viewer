@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://brkqwcvse1kx6"]
+
+[ext_resource type="Script" uid="uid://dg73jkw8gtq8y" path="res://cache.gd" id="1_hu14s"]
+
+[node name="TextureCache" type="Node"]
+script = ExtResource("1_hu14s")

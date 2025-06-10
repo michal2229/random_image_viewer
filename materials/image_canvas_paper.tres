@@ -1,0 +1,14 @@
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://5ucpp6txfpn2"]
+
+[sub_resource type="Gradient" id="Gradient_lxfyx"]
+offsets = PackedFloat32Array(0, 0.0376344, 0.715054, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.55914, 0.55914, 0.55914, 1, 0.715054, 0.715054, 0.715054, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_kynel"]
+gradient = SubResource("Gradient_lxfyx")
+
+[resource]
+albedo_color = Color(0.08, 0.08, 0.08, 1)
+metallic_specular = 0.2
+roughness = 0.5
+normal_texture = SubResource("GradientTexture2D_kynel")

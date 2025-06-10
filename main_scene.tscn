@@ -1,0 +1,170 @@
+[gd_scene load_steps=14 format=3 uid="uid://btj4k0uc1rtfo"]
+
+[ext_resource type="Script" uid="uid://fvyw5vqbq6kj" path="res://image_manager.gd" id="1_0f027"]
+[ext_resource type="Script" uid="uid://dqo62mlgtep03" path="res://camera_3d.gd" id="1_gyfs4"]
+[ext_resource type="FontFile" uid="uid://c3fb7afytbpxm" path="res://font/martian-mono-1.1.0-ttf/MartianMono-StdLt.ttf" id="4_8mm7a"]
+[ext_resource type="Texture2D" uid="uid://2612gjup64yf" path="res://gfx/tex/tex_background.tres" id="4_d5x1h"]
+
+[sub_resource type="Gradient" id="Gradient_d5x1h"]
+offsets = PackedFloat32Array(0.363487, 0.708882, 1)
+colors = PackedColorArray(0, 0, 0, 0, 1, 1, 1, 0.635294, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_8mm7a"]
+noise_type = 3
+frequency = 0.0211
+offset = Vector3(500, 0, 0)
+fractal_type = 3
+fractal_octaves = 10
+fractal_ping_pong_strength = 1.485
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_hq1ik"]
+in_3d_space = true
+seamless = true
+seamless_blend_skirt = 0.301
+color_ramp = SubResource("Gradient_d5x1h")
+noise = SubResource("FastNoiseLite_8mm7a")
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_gyfs4"]
+sky_cover = SubResource("NoiseTexture2D_hq1ik")
+sky_cover_modulate = Color(0.886262, 0.886261, 0.886262, 1)
+
+[sub_resource type="Sky" id="Sky_gyfs4"]
+sky_material = SubResource("ProceduralSkyMaterial_gyfs4")
+radiance_size = 0
+
+[sub_resource type="Environment" id="Environment_d5x1h"]
+background_mode = 2
+sky = SubResource("Sky_gyfs4")
+ambient_light_source = 2
+reflected_light_source = 1
+
+[sub_resource type="Shader" id="Shader_gyfs4"]
+code = "// NOTE: Shader automatically converted from Godot Engine 4.4.1.stable's StandardMaterial3D.
+
+shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_burley, specular_schlick_ggx;
+
+uniform vec4 albedo : source_color;
+uniform sampler2D texture_albedo : source_color, filter_linear_mipmap, repeat_enable;
+uniform ivec2 albedo_texture_size;
+uniform float point_size : hint_range(0.1, 128.0, 0.1);
+
+uniform float roughness : hint_range(0.0, 1.0);
+uniform sampler2D texture_metallic : hint_default_white, filter_linear_mipmap, repeat_enable;
+uniform vec4 metallic_texture_channel;
+uniform sampler2D texture_roughness : hint_roughness_r, filter_linear_mipmap, repeat_enable;
+
+uniform float specular : hint_range(0.0, 1.0, 0.01);
+uniform float metallic : hint_range(0.0, 1.0, 0.01);
+
+uniform sampler2D texture_normal : hint_roughness_normal, filter_linear_mipmap, repeat_enable;
+uniform float normal_scale : hint_range(-16.0, 16.0);
+
+uniform vec3 uv1_scale;
+uniform vec3 uv1_offset;
+uniform vec3 uv2_scale;
+uniform vec3 uv2_offset;
+
+void vertex() {
+	UV  = UV * uv1_scale.xy + uv1_offset.xy;
+	UV2 = UV * uv2_scale.xy + uv2_offset.xy;
+}
+
+void fragment() {
+	vec2 base_uv   = UV;
+	vec2 detail_uv = UV2;
+
+	vec4 albedo_tex = texture(texture_albedo, base_uv);
+	ALBEDO = albedo.rgb * albedo_tex.rgb;
+
+	float metallic_tex = dot(texture(texture_metallic, base_uv), metallic_texture_channel);
+	METALLIC = metallic_tex * metallic;
+	SPECULAR = specular;
+
+	vec4 roughness_texture_channel = vec4(1.0, 0.0, 0.0, 0.0);
+	float roughness_tex = dot(texture(texture_roughness, base_uv), roughness_texture_channel);
+	ROUGHNESS = roughness_tex * roughness;
+
+	// Normal Map: Enabled
+	NORMAL_MAP = texture(texture_normal, base_uv *   1.0f).rgb * 0.10f
+			   + texture(texture_normal, base_uv *   2.0f).rgb * 0.15f
+			   + texture(texture_normal, base_uv *   8.0f).rgb * 0.20f
+			   + texture(texture_normal, base_uv *   64.0f).rgb * 0.25f
+			   + texture(texture_normal, base_uv * 1024.0f).rgb * 0.30f;
+	NORMAL_MAP_DEPTH = normal_scale;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_d5x1h"]
+render_priority = 0
+shader = SubResource("Shader_gyfs4")
+shader_parameter/albedo = Color(0.0338533, 0.0338533, 0.0338533, 1)
+shader_parameter/albedo_texture_size = Vector2i(512, 512)
+shader_parameter/point_size = 1.0
+shader_parameter/roughness = 0.5
+shader_parameter/metallic_texture_channel = Vector4(1, 0, 0, 0)
+shader_parameter/specular = 0.2
+shader_parameter/metallic = 0.0
+shader_parameter/texture_normal = ExtResource("4_d5x1h")
+shader_parameter/normal_scale = 1.0
+shader_parameter/uv1_scale = Vector3(1, 1, 1)
+shader_parameter/uv1_offset = Vector3(0, 0, 0)
+shader_parameter/uv2_scale = Vector3(4, 4, 4)
+shader_parameter/uv2_offset = Vector3(0, 0, 0)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_gyfs4"]
+material = SubResource("ShaderMaterial_d5x1h")
+size = Vector2(3, 1.2)
+orientation = 2
+
+[node name="MainScene" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+current = true
+near = 0.001
+far = 100.0
+script = ExtResource("1_gyfs4")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_d5x1h")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.880593, -0.338569, 0.331552, 0.205365, 0.903209, 0.376881, -0.427061, -0.26379, 0.86489, 0, 0, 0)
+
+[node name="ImageManager" type="Node3D" parent="."]
+script = ExtResource("1_0f027")
+divider = 2
+num_levels = 5
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.05)
+mesh = SubResource("PlaneMesh_gyfs4")
+
+[node name="LabelKeyShortcuts" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.469, 0.571, -0.035)
+pixel_size = 0.0002
+texture_filter = 5
+text = "                  Keyboard shortcuts
+
+focus image         : left click on image
+panning             : W, S, A, D  | mouse with button pressed
+zoom in, out        : +, -        | Q, E  | mouse scroll
+view random image   : R           | Tab   | Space
+copy image          : Ctrl + S    | Enter  (img is copied into gdsaved dir in cwd)
+delete image        : Shift + Del  (img is moved into gdtrash dir in cwd)
+one img prev in dir : <-
+one img next in dir : ->
+prev screen in dir  : PgUp
+next screen in dir  : PgDn
+prev viewed         : Backspace
+reset view          : `  (~)
+show in file mgr    : O
+
+"
+font = ExtResource("4_8mm7a")
+horizontal_alignment = 0
+vertical_alignment = 0
+line_spacing = 10.0
+
+[connection signal="ready" from="ImageManager" to="ImageManager" method="_on_ready"]

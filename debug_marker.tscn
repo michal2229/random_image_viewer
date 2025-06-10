@@ -1,0 +1,42 @@
+[gd_scene load_steps=5 format=3 uid="uid://bxlbpbkv1wtmr"]
+
+[sub_resource type="GDScript" id="GDScript_s6u11"]
+resource_name = "debug_marker_script"
+script/source = "extends Node3D
+
+@onready var mesh_instance_3d: MeshInstance3D = $MeshInstance3D
+@onready var label_3d: Label3D = $Label3D
+
+var idx_offset = 0
+
+func set_idx_offset(idxoff: int):
+	idx_offset = idxoff
+	label_3d.text = str(idxoff)
+"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s6u11"]
+albedo_color = Color(0.615073, 0.3666, 0.94, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_582yx"]
+material = SubResource("StandardMaterial3D_s6u11")
+size = Vector2(1, 1)
+orientation = 2
+
+[sub_resource type="GDScript" id="GDScript_582yx"]
+resource_name = "debug_mesh_script"
+script/source = "extends MeshInstance3D
+"
+
+[node name="DebugMarker" type="Node3D"]
+script = SubResource("GDScript_s6u11")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_582yx")
+script = SubResource("GDScript_582yx")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.1)
+pixel_size = 0.0005
+text = "X"
+font_size = 1280
+outline_size = 127
